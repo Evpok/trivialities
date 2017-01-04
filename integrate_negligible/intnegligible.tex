@@ -35,7 +35,8 @@
 \usepackage{luatexbase}
 %
 \usepackage{amsfonts,amssymb}
-\usepackage{amsmath,amsthm}
+\usepackage{amsmath}
+\usepackage{amsthm}
 \usepackage{mathtools}	% AMS Maths service pack
 	\newtagform{brackets}{[}{]}	% Pour des lignes d'équation numérotées entre crochets
 	\mathtoolsset{showonlyrefs,showmanualtags,mathic}	% affiche les tags manuels (\tag et \tag*) et corrige le kerning des maths inline dans un bloc italique voir la doc de mathtools
@@ -150,6 +151,21 @@
 \usepackage{cleveref}
 %
 %%% Définition des  théorèmes %%%%
+% Custom `amsthm` proof style. Has to be put here, since
+% `thmtools` patches the `proof` environment itself
+\makeatletter
+    \renewenvironment{proof}[1][\proofname]{
+        \par
+        \pushQED{\qed}
+        \normalfont \topsep6\p@\@plus6\p@\relax
+        \trivlist
+        \item\relax
+        {\bfseries#1}\newline\ignorespaces
+    }{
+        \popQED\endtrivlist\@endpefalse
+    }
+\makeatother
+
 \usepackage{thmtools} % Gestion avancée des théorèmes
 	\renewcommand\listtheoremname{Table des théorèmes} % Traduction
 	% Pour avoir la commande \thbookmark qui ajoute le théorème en pdf bookmark
@@ -305,28 +321,29 @@ Let us begin by proving the following corollary, which is the particular case fo
         \frac{F(x)}{x} \xrightarrow[x→+∞]{} 0
     \end{equation}
 \end{cor}
-\begin{proof}
-    Let $x∈ℝ$, then
+\begin{proof}[Proof of \cref{cor|particular}]
+    Let $x∈ℝ⁺_*$ (since we only care about the limit in $+∞$ anyway), then
 
     \begin{equation}
         \frac{F(x)}{x} = \frac{1}{x}∫_0^xf(t)\dif{t}
     \end{equation}
 
-    Let $ε>0$, since $f \xrightarrow[+∞]{} 0$ there exists $A∈ℝ$ (for convenience, let us take it positive, too) such that for all $x⩾A$, $\abs{f(x)} ⩽ ε$. Thus
+    Let $ε>0$, since $f \xrightarrow[+∞]{} 0$ there exists $A∈ℝ$ (for convenience, let us take it positive, too) such that for all $x⩾A$, $\abs{f(x)}⩽ε$. Thus
     \begin{align}
-        \frac{F(x)}{x}
-            &= \frac{1}{x}\underbrace{∫_0^A f(t)\dif{t}}_{⩽A\sup_{[0, A]}f} + \frac{1}{x}∫_A^x \underbrace{f(t)}_{⩽ε}\dif{t}\\
-            &⩽ \underbrace{\frac{A\sup_{[0, A]}f}{x}}_{\xrightarrow[x→+∞]{}0} + \underbrace{\frac{\abs{x-A}}{x}}_{\xrightarrow[x→+∞]{}1}ε \xrightarrow[x→+∞]{} ε
+        \abs*{\frac{F(x)}{x}}
+            &⩽ \frac{1}{x}∫_0^x\abs{f(t)}\dif{t}\\
+            &⩽ \frac{1}{x}\underbrace{∫_0^A \abs{f(t)}\dif{t}}_{⩽A\sup_{[0, A]}\abs{f}} + \frac{1}{x}∫_A^x \underbrace{\abs{f(t)}}_{⩽ε}\dif{t}\\
+            &⩽ \underbrace{\frac{A\sup_{[0, A]}\abs{f}}{x}}_{\xrightarrow[x→+∞]{}0} + \underbrace{\frac{\abs{x-A}}{x}}_{\xrightarrow[x→+∞]{}1}ε \xrightarrow[x→+∞]{} ε
     \end{align}
 
-    Thus, for all $ε>0$, $\lim_{x→+∞}\frac{F(x)}{x}⩽ε$, and so
+    Thus, for all $ε>0$, $\lim_{x→+∞}\abs*{\frac{F(x)}{x}}⩽ε$, and so
     \begin{equation}
         \frac{F(x)}{x} \xrightarrow[x→+∞]{} 0
     \end{equation}
 \end{proof}
 
 We can then easily prove \cref{prop|original}
-\begin{proof}[\cref{prop|original}]
+\begin{proof}[Proof of \cref{prop|original}]
     Let $f = a + w$, with $w: ℝ⁺⟶ℝ$ and $\lim_{+∞}w = 0$. If $F$ is a primitive of $f$, we then have for all $x$
     \begin{equation}
         F(x) = ax + W(x) + C
