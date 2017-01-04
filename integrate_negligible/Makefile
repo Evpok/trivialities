@@ -1,4 +1,4 @@
-LATEX = latexmk -lualatex
+LATEX = latexmk -pdf -pdflatex="lualatex -interaction=nonstopmode"
 CLEAN = latexmk -C
 
 .DEFAULT_GOAL := intnegligible.pdf
@@ -9,5 +9,3 @@ intnegligible.pdf:
 .PHONY: clean
 clean:
 	$(CLEAN)
-
-
