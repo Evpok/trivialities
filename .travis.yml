@@ -1,3 +1,5 @@
+language: r
+
 addons:
   apt:
     packages:
@@ -7,10 +9,6 @@ addons:
     - texlive-latex-base
     - texlive-latex-extra
     - texlive-latex-recommended
-
-before_install:
-    - tlmgr update --self
-    - tlmgr update all
 
 script:
   - make all
