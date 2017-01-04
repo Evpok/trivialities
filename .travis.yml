@@ -1,14 +1,14 @@
-language: r
-
 addons:
   apt:
     packages:
-    - latexmk
-    - texlive-fonts-extra
-    - texlive-fonts-recommended
-    - texlive-latex-base
-    - texlive-latex-extra
-    - texlive-latex-recommended
+    - curl
+    - tar
+
+before_install:
+    - curl -Lo /tmp/texlive.tar.gz https://github.com/jimhester/ubuntu-bin/releases/download/latest/texlive.tar.gz
+    - tar xzf /tmp/texlive.tar.gz -C ~
+    - export PATH="/$HOME/texlive/bin/x86_64-linux:$PATH"
+    - tlmgr update --self
 
 script:
   - make all
