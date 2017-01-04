@@ -104,6 +104,16 @@
 \renewcommand{\mkbegdispquote}[2]{\openautquote\begin{emphasize}}
 \renewcommand{\mkenddispquote}[2]{\end{emphasize}\closeautoquote#1\newline\relax---\,#2}
 
+% Use emphasis for foreign (text) quotes
+\makeatletter
+    \renewcommand{\mktextquote}[6]{%
+        #1%
+        \iflanguage{\xpg@main@language}{}{\em}%
+        #2#4#3#6#5%
+        \em%
+    }
+\makeatother
+
 %%%% Maths unicode %%%%
 % À charger après tous les autres packages de maths
 \usepackage[math-style=french]{unicode-math} % 'nuf said
@@ -221,6 +231,9 @@
 \DeclareMathOperator{\Var}{Var}	% Variance
 
 % Notations élaborées %
+\DeclareMathOperator*{\smallo}{\omicron}	% Landau notation. With an omicron. Because I like that.
+\newunicodechar{ο}{\smallo} 	% That's an omicron (U+03BF)
+
 \DeclareMathOperator{\Expectation}{E}	% Espérance
 \NewDocumentCommand\Ex{m}{\Expectation\mleft(#1\mright)}
 
@@ -289,8 +302,8 @@
 \maketitle
 \thispagestyle{main}
 
-\section{Problem statement}
-\blockquote[@LHomme\_Qui\_Rit]{
+\section{Original problem statement}
+\foreignblockquote{french}[@LHomme\_Qui\_Rit]{
     Supposons une fonction f:R⁺->R continue telle que f(x)=a+o(1) avec a réel.
 
     Peut-on affirmer que F(x)/x, avec F primitive de f, tend vers a quand x tend vers +inf ?
@@ -300,7 +313,7 @@
 
 In other words
 \begin{prop}\label{prop|original}
-    Let $f:ℝ⁺⟶ℝ$ be a continuous function, such that $f \xrightarrow[+∞]{} a ∈ ℝ$ and $F$ a primitive of $f$.
+    Let $f:ℝ⁺⟶ℝ$ be a continuous function such that $f \xrightarrow[+∞]{} a ∈ ℝ$ and $F$ a primitive of $f$.
 
     Then
     \begin{equation}
@@ -308,13 +321,10 @@ In other words
     \end{equation}
 \end{prop}
 
-\section{Proof}
-Let us begin by proving the following corollary, which is the particular case for $a=0$ and $F(0)=0$.
+\section{Proof of the original conjecture}
+Let us begin by proving the following corollary, which is the particular case for $a=0$.
 \begin{cor}\label{cor|particular}
-    Let $f:ℝ⁺⟶ℝ$ be a continuous function, such that $f \xrightarrow[+∞]{} 0$. Let
-    \begin{equation}
-        F : x ⟼ ∫_0^xf(t)\dif{t}
-    \end{equation}
+    Let $f:ℝ⁺⟶ℝ$ be a continuous function, such that $f \xrightarrow[+∞]{} 0$ and $F$ a primitive of $f$.
 
     Then
     \begin{equation}
@@ -325,15 +335,16 @@ Let us begin by proving the following corollary, which is the particular case fo
     Let $x∈ℝ⁺_*$ (since we only care about the limit in $+∞$ anyway), then
 
     \begin{equation}
-        \frac{F(x)}{x} = \frac{1}{x}∫_0^xf(t)\dif{t}
+        \frac{F(x)}{x} = \frac{1}{x}∫_α^xf(t)\dif{t}
     \end{equation}
+    for some $α∈ℝ$.
 
     Let $ε>0$, since $f \xrightarrow[+∞]{} 0$ there exists $A∈ℝ$ (for convenience, let us take it positive, too) such that for all $x⩾A$, $\abs{f(x)}⩽ε$. Thus
     \begin{align}
         \abs*{\frac{F(x)}{x}}
-            &⩽ \frac{1}{x}∫_0^x\abs{f(t)}\dif{t}\\
-            &⩽ \frac{1}{x}\underbrace{∫_0^A \abs{f(t)}\dif{t}}_{⩽A\sup_{[0, A]}\abs{f}} + \frac{1}{x}∫_A^x \underbrace{\abs{f(t)}}_{⩽ε}\dif{t}\\
-            &⩽ \underbrace{\frac{A\sup_{[0, A]}\abs{f}}{x}}_{\xrightarrow[x→+∞]{}0} + \underbrace{\frac{\abs{x-A}}{x}}_{\xrightarrow[x→+∞]{}1}ε \xrightarrow[x→+∞]{} ε
+            &⩽ \frac{1}{x}∫_α^x\abs{f(t)}\dif{t}\\
+            &⩽ \frac{1}{x}\underbrace{∫_α^A \abs{f(t)}\dif{t}}_{⩽\abs{A-α}\sup_{[α, A]}\abs{f}} + \frac{1}{x}∫_A^x \underbrace{\abs{f(t)}}_{⩽ε}\dif{t}\\
+            &⩽ \underbrace{\frac{\abs{A-α}\sup_{[α, A]}\abs{f}}{x}}_{\xrightarrow[x→+∞]{}0} + \underbrace{\frac{\abs{x-A}}{x}}_{\xrightarrow[x→+∞]{}1}ε \xrightarrow[x→+∞]{} ε
     \end{align}
 
     Thus, for all $ε>0$, $\lim_{x→+∞}\abs*{\frac{F(x)}{x}}⩽ε$, and so
@@ -358,4 +369,12 @@ We can then easily prove \cref{prop|original}
     \end{align}
 \end{proof}
 
+\section{Further results}
+The previous section proved the original conjecture in its restated form. But let us recall the original statement (emphasis mine) \foreigntextquote{french}{Supposons une fonction f:R⁺->R continue telle que \textbf{f(x)=a+o(1)} avec a réel}. Indeed, if we keep this formulation, \cref{cor|particular} becomes
+
+\begin{cor}
+    Let $f=\displaystyleο_{+∞}(1)$ and $F$ a primitive of $f$. Then $F=\displaystyleο_{+∞}(x)$.
+\end{cor}
+
+Which begs the question: “What of $f=ο(x)$?”.
 \end{document}
