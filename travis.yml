@@ -1,0 +1,12 @@
+addons:
+  apt:
+    packages:
+    - latexmk
+    - texlive-fonts-extra
+    - texlive-fonts-recommended
+    - texlive-latex-base
+    - texlive-latex-extra
+    - texlive-latex-recommended
+
+script:
+  - make all
