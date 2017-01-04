@@ -8,5 +8,9 @@ addons:
     - texlive-latex-extra
     - texlive-latex-recommended
 
+before_install:
+    - tlmgr update --self
+    - tlmgr update all
+
 script:
   - make all
