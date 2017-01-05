@@ -6,7 +6,7 @@ addons:
     - fonts-linuxlibertine
 
 before_install:
-    - source ./tools/install_texlive.sh
+    - source ./install_texlive.sh
 
 script:
   - make all
