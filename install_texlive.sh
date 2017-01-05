@@ -24,18 +24,15 @@ tlmgr install luatex
 
 # Required to build plain and LaTeX formats:
 # TeX90 plain for unpacking, pdfLaTeX, LuaLaTeX and XeTeX for tests
-tlmgr install cm etex knuth-lib latex-bin tex tex-ini-files unicode-data \
-  xetex
+tlmgr install cm etex knuth-lib latex-bin tex tex-ini-files unicode-data xetex
 
-# Additional requirements for (u)pLaTeX, done with no dependencies to
-# avoid large font payloads
-tlmgr install --no-depends babel ptex uptex ptex-base uptex-base ptex-fonts \
+# Additional requirements for (u)pLaTeX
+tlmgr install babel ptex uptex ptex-base uptex-base ptex-fonts \
   uptex-fonts platex uplatex
 
 # Assuming a 'basic' font set up, metafont is required to avoid
 # warnings with some packages and errors with others
 tlmgr install metafont mfware
-
 
 # Set up graphics: nowadays split over a few places and requiring
 # HO's bundle
@@ -48,9 +45,9 @@ tlmgr install graphics graphics-cfg graphics-def oberdiek
 #
 # fontspec comes first as other packages tested have it as a dep
 tlmgr install fontspec
-tlmgr install ifluatex lm lualibs luaotfload
+tlmgr install ifluatex lm lualibs luaotfload ifxetex luatexbase
 
-tlmgr install $(cat topics/**/*.tex | sed -n 's/^[^%]*\\usepackage[^{]*{\([^}]*\)}.*$/\1/p' | sed 's/,\s*/ /p' | paste -sd ' ' -) latexmk oberdiek amsmath tools titlesec caption pgf ifxetex
+tlmgr install $(cat topics/**/*.tex | sed -n 's/^[^%]*\\usepackage[^{]*{\([^}]*\)}.*$/\1/p' | sed 's/,\s*/ /p' | paste -sd ' ' -) latexmk oberdiek amsmath tools titlesec caption pgf
 
 # Keep no backups (not required, simply makes cache bigger)
 tlmgr option -- autobackup 0
