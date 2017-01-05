@@ -50,7 +50,7 @@ tlmgr install graphics graphics-cfg graphics-def oberdiek
 tlmgr install fontspec
 tlmgr install ifluatex lm lualibs luaotfload
 
-tlmgr install $(cat **/*.tex | sed -n 's/^[^%]*\\usepackage[^{]*{\([^}]*\)}.*$/\1/p' | sed 's/,\s*/ /p' | paste -sd ' ' -) latexmk lualatex
+tlmgr install $(cat topics/**/*.tex | sed -n 's/^[^%]*\\usepackage[^{]*{\([^}]*\)}.*$/\1/p' | sed 's/,\s*/ /p' | paste -sd ' ' -) latexmk lualatex
 
 # Keep no backups (not required, simply makes cache bigger)
 tlmgr option -- autobackup 0
