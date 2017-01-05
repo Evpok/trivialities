@@ -3,14 +3,10 @@ addons:
     packages:
     - curl
     - tar
-    - python
+    - fonts-linuxlibertine
 
 before_install:
-    - curl -Lo /tmp/texlive.tar.gz https://github.com/jimhester/ubuntu-bin/releases/download/latest/texlive.tar.gz
-    - tar xzf /tmp/texlive.tar.gz -C ~
-    - export PATH="/$HOME/texlive/bin/x86_64-linux:$PATH"
-    - tlmgr update --self
-    - tlmgr install $(cat **/*.tex | sed -n 's/^[^%]*\\usepackage[^{]*{\([^}]*\)}.*$/\1/p' | sed 's/,\s*/ /p' | paste -sd ' ' -)
+    - source ./tools/install_texlive.sh
 
 script:
   - make all
