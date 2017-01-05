@@ -45,7 +45,7 @@ tlmgr install graphics graphics-cfg graphics-def oberdiek
 #
 # fontspec comes first as other packages tested have it as a dep
 tlmgr install fontspec
-tlmgr install ifluatex lm lualibs luaotfload ifxetex luatexbase cta­blestack
+tlmgr install ifluatex lm lualibs luaotfload ifxetex luatexbase ctablestack
 
 tlmgr install $(cat topics/**/*.tex | sed -n 's/^[^%]*\\usepackage[^{]*{\([^}]*\)}.*$/\1/p' | sed 's/,\s*/ /p' | paste -sd ' ' -) latexmk oberdiek amsmath tools titlesec caption pgf
 
