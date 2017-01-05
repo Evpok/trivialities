@@ -1,4 +1,4 @@
-SUBDIRS := $(wildcard */.)
+SUBDIRS := $(wildcard topics/*/.)
 CLEANSUBDIRS = $(addprefix clean_,$(SUBDIRS))
 
 all: $(SUBDIRS)
@@ -11,4 +11,3 @@ $(CLEANSUBDIRS):
 clean: $(CLEANSUBDIRS)
 
 .PHONY: all $(SUBDIRS) $(CLEANSUBDIRS) clean
-
