@@ -47,7 +47,7 @@ tlmgr install graphics graphics-cfg graphics-def oberdiek
 tlmgr install fontspec
 tlmgr install ifluatex lm lualibs luaotfload ifxetex luatexbase ctablestack filehook
 
-tlmgr install $(cat topics/**/*.tex | sed -n 's/^[^%]*\\usepackage[^{]*{\([^}]*\)}.*$/\1/p' | sed 's/,\s*/ /p' | paste -sd ' ' -) latexmk oberdiek amsmath tools titlesec caption pgf hyph-utf8 amscls
+tlmgr install $(cat topics/**/*.tex | sed -n 's/^[^%]*\\usepackage[^{]*{\([^}]*\)}.*$/\1/p' | sed 's/,\s*/ /p' | paste -sd ' ' -) latexmk oberdiek amsmath tools titlesec caption pgf hyph-utf8 amscls bbm-macros
 
 # Keep no backups (not required, simply makes cache bigger)
 tlmgr option -- autobackup 0

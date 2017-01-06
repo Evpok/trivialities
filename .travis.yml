@@ -5,7 +5,12 @@ addons:
     - tar
     - fonts-linuxlibertine
 
-before_install:
+cache:
+  directories:
+    - /tmp/texlive
+    - $HOME/.texlive
+
+install:
     - source ./install_texlive.sh
 
 script:
