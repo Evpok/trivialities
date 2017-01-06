@@ -51,7 +51,14 @@ tlmgr install ifluatex lm lualibs luaotfload ifxetex luatexbase ctablestack file
 # Plus some superpackages that are not (yet) automatically detected, packages
 # whose texlive name doesn't match the file name and dependencies that tlmgr
 # apparently doesn't know.
-tlmgr install $(cat topics/**/*.tex | sed -n 's/^[^%]*\\usepackage[^{]*{\([^}]*\)}.*$/\1/p' | sed 's/,\s*/ /p' | paste -sd ' ' -) latexmk oberdiek amsmath tools titlesec caption pgf hyph-utf8 amscls bbm-macros varwidth ms
+# A better solution might be to build the documents locally in a complete texlive
+# install to get the list of the packages that are actually used and use that list
+# to tell Travis what to install.
+# Or Travis could, y'know, have an up-to-date texlive distribution using a ppa
+# And Ubuntu maintainers could actually care.
+# Eh, daydreaming, back to your programs.
+tlmgr install $(cat topics/**/*.tex | sed -n 's/^[^%]*\\usepackage[^{]*{\([^}]*\)}.*$/\1/p' | sed 's/,\s*/ /p' | paste -sd ' ' -)\
+              latexmk oberdiek amsmath tools titlesec caption pgf hyph-utf8 amscls bbm-macros varwidth ms ucharcat
 
 # Keep no backups (not required, simply makes cache bigger)
 tlmgr option -- autobackup 0
