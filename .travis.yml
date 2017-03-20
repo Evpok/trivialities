@@ -4,6 +4,7 @@ addons:
     - curl
     - tar
     - fonts-linuxlibertine
+    - texlive-fonts-recommended
 
 cache:
   directories:
