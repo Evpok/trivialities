@@ -1,10 +1,11 @@
+NAME = weierstrass
 LATEX = latexmk -lualatex -halt-on-error -file-line-error -interaction=nonstopmode
 CLEAN = latexmk -C
 
-.DEFAULT_GOAL := weierstrass.pdf
+.DEFAULT_GOAL := $(NAME).pdf
 
-intnegligible.pdf:
-	$(LATEX) weierstrass
+$(NAME).pdf:
+	$(LATEX) $(NAME)
 
 .PHONY: clean
 clean:
