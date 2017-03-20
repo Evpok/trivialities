@@ -58,7 +58,7 @@ tlmgr install ifluatex lm lualibs luaotfload ifxetex luatexbase ctablestack file
 # And Ubuntu maintainers could actually care.
 # Eh, daydreaming, back to your programs.
 tlmgr install $(cat topics/**/*.tex | sed -n 's/^[^%]*\\usepackage[^{]*{\([^}]*\)}.*$/\1/p' | sed 's/,\s*/ /p' | paste -sd ' ' -)\
-              latexmk oberdiek amsmath tools titlesec caption pgf hyph-utf8 amscls bbm-macros varwidth ms ucharcat xits libertine url doclicense xifthen ifmtarg carlisle shadethm biber logreq xstring etextools
+              latexmk oberdiek amsmath tools titlesec caption pgf hyph-utf8 amscls bbm-macros varwidth ms ucharcat xits libertine url doclicense xifthen ifmtarg carlisle shadethm biber logreq xstring etextools etoolbox
 
 # Keep no backups (not required, simply makes cache bigger)
 tlmgr option -- autobackup 0
