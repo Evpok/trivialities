@@ -1,0 +1,561 @@
+% Copyright © 2017, Evpok Padding <evpok.padding@gmail.com>
+%
+% Permission is granted to Do What The Fuck You Want To
+% with this document.
+%
+% See the WTF Public License, Version 2 as published by Sam Hocevar
+% at http://wtfpl.net if you need more details.
+
+\RequirePackage{xparse}
+% Settings
+\NewDocumentCommand\myname{}{Evpok Padding}
+\NewDocumentCommand\mylab{}{University of Procrastinatown}
+\NewDocumentCommand\pdftitle{}{On Weierstraß Theorem}
+\NewDocumentCommand\mymail{}{evpok.padding@gmail.com}
+\NewDocumentCommand\titlepagetitle{}{\pdftitle}
+\NewDocumentCommand\docdate{}{\today}
+\NewDocumentCommand\pageheadertitle{}{\pdftitle}
+
+%%%% Type de document %%%%
+\documentclass[a4paper, 11pt]{article}
+
+% Paper properties
+\usepackage{parskip}	% Space between paragraphs instead of indentation
+
+\usepackage{polyglossia}
+	\setmainlanguage{english}
+	\setotherlanguage{french}
+
+
+%%%% Packages %%%%%
+\usepackage{fontspec}
+	% Polices de caractères, voir aussi dans les troublesome packages (unicode-math)
+	\setmainfont[Ligatures=TeX]{Linux Libertine O}
+	\setsansfont[Ligatures=TeX]{Linux Biolinum O}
+
+\usepackage{luacode}
+\usepackage{metalogo}
+\usepackage{luatexbase}
+%
+\usepackage{amsfonts,amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{mathtools}	% AMS Maths service pack
+	\newtagform{brackets}{[}{]}	% Pour des lignes d'équation numérotées entre crochets
+	\mathtoolsset{showmanualtags, mathic}	% affiche les tags manuels (\tag et \tag*) et corrige le kerning des maths inline dans un bloc italique voir la doc de mathtools
+	\usetagform{brackets}	% Utilise le style de tags défini plus haut
+
+\usepackage{lualatex-math}
+
+\usepackage{siunitx}
+	\sisetup{locale=FR,inter-unit-product=\ensuremath{{}\cdot{}}}
+\usepackage{enumitem}	% Pour de belles énumérations
+\usepackage{booktabs}	% Pour de beaux tableaux
+
+\usepackage{bbm}	% Gras de tableau pour tous!
+\usepackage{faktor} 	% Structures quotient
+\usepackage{xspace}	% Pour une gestion propre des espaces
+\usepackage{esvect}	% Pretty vector arrows
+\usepackage{microtype}
+\usepackage{mleftright}	% Pour avoir des délimiteurs de taille variable correctement espacés
+\usepackage{fancyvrb}	% Pour de beaux verbatims
+\usepackage{caption, subcaption}	% Pour des sous-figures
+\usepackage{ccicons}	% Pour les licences Creative Commons
+\usepackage[section]{placeins}	% Restreindre les `floats` à leur section
+\usepackage{multicol}
+	\setlength\columnsep{2em}
+\usepackage{tabu}
+	\tabulinesep=1mm
+\usepackage{listings}
+	\lstset{basicstyle=\ttfamily}
+\usepackage{csquotes}	% Localised quotation marks
+
+\usepackage[totpages,user]{zref}
+
+% À activer si besoin
+% Bibliographie, style alphabétique, références retour et suggestion de saut de ligne après les blocs.
+\usepackage[backend=biber, style=alphabetic, backref=true, block=ragged, autopunct, maxnames=6]{biblatex}
+	\defbibheading{bibliography}[\refname]{\section*{#1}}
+
+%%% TikZ %%%
+% À activer au besoin
+% Si on active l'externalisation, penser à créer un dossier tikzpics/
+% dans le même dossier que le .tex comme tikz ne sait visiblement pas
+% le créer tout seul
+\usepackage{xcolor}
+\usepackage{tikz}	% Pour les dessins
+% 	\usetikzlibrary{arrows}
+% 	\usetikzlibrary{shapes}
+%
+% 	\usepgflibrary{fpu}
+% 	\usetikzlibrary{calc}
+
+% \usepackage{todonotes}
+
+% Define a TikZ node for math content:
+% \NewDocumentCommand{\mathnode}{O{}mm}{\tikz[remember picture, baseline=(#2.base), inner sep = 0pt]{\node[#1] (#2) {$\displaystyle #3$};}}
+
+%%%% Troublesome packages %%%%
+% Ceux-ci ont tendance à mettre le bazar, on les appelle en dernier
+
+%%%% csquotes Config %%%%
+\NewDocumentCommand\bigopenquote{O{“}}{
+	\tikz[remember picture, overlay, xshift=-1.5em, yshift=-1em, text=gray] \node (OQ) {\fontsize{60pt}{60pt}\selectfont#1};
+}
+% for commands `\blockquote` and related:
+\renewcommand{\mkblockquote}[4]{\bigopenquote\em\relax#1\em\relax#2\newline\relax---\,#4#3}
+% for environments `\displayquote` and related:
+\renewcommand{\mkbegdispquote}[2]{\openautquote\begin{emphasize}}
+\renewcommand{\mkenddispquote}[2]{\end{emphasize}\closeautoquote#1\newline\relax---\,#2}
+
+% Use emphasis for foreign (text) quotes
+\makeatletter
+    \renewcommand{\mktextquote}[6]{%
+        #1%
+        \iflanguage{\xpg@main@language}{}{\em}%
+        #2#4#3#6#5%
+        \em%
+    }
+\makeatother
+
+%%%% Maths unicode %%%%
+% À charger après tous les autres packages de maths
+\usepackage[math-style=french]{unicode-math} % 'nuf said
+	\setmathfont{XITS Math}
+\usepackage{newunicodechar}
+	\newunicodechar{√}{\sqrt}
+
+
+%%%% Plot functions using TikZ %%%%
+% Apparently still has to be loaded after unicode-math despite http://tex.stackexchange.com/a/227857/8547
+% \usepackage{pgfplots}
+% 	\pgfplotsset{compat=1.12}
+
+%%%% Liens hypertexte et pdf stuff %%%%
+\usepackage{hyperxmp}	% XMP metadata
+\usepackage[backref,pagebackref=false,hyperindex=true,bookmarks=true,hypertexnames=false]{hyperref}
+\hypersetup{	% Config d'hyperref
+    pdfencoding=auto,	% détection d'encodage
+    colorlinks=true,	% colorise les liens
+    breaklinks=true,	% permet le retour à la ligne dans les liens trop longs
+    urlcolor= blue,	% couleur des hyperliens
+    linkcolor= red,	% couleur des liens internes
+    pdfdisplaydoctitle=true,	% Titre au lieu de nom de fichier,
+    unicode=true,
+    bookmarksopen=true,	% si les signets Acrobat sont créés, les afficher complètement.
+    pdftitle={\pdftitle},	% informations apparaissant dans
+    pdfauthor={\myname <\mymail>},	% dans les informations du document
+    pdflang={fr},	% langue du document
+    pdfsubject={},	% sous  les lecteurs modernes
+    pdfcopyright={Copyright © \the\year, \myname},
+    % pdflicenseurl={http://wtfpl.net},	% The url of your licence
+    pdfcontactemail={\mymail},
+}
+%
+%%%% License %%%%
+\usepackage[type={CC},modifier={zero},version={1.0}]{doclicense}
+
+%%%% PDF bookmarks %%%%
+% Profondeur allant jusqu'au paragraphe
+\usepackage[depth=paragraph]{bookmark}
+
+
+%%%% Références intelligentes %%%%
+% http://tex.stackexchange.com/a/285953/8547
+\usepackage{nameref, cleveref}
+\let\globcount\newcount
+\usepackage{autonum}	% N'afficher que les numéros d'équations référencées
+%
+%%% Définition des  théorèmes %%%%
+% Custom `amsthm` proof style. Has to be put here, since
+% `thmtools` patches the `proof` environment itself
+\makeatletter
+    \renewenvironment{proof}[1][\proofname]{
+        \par
+        \pushQED{\qed}
+        \normalfont \topsep6\p@\@plus6\p@\relax
+        \trivlist
+        \item\relax
+        {\bfseries#1}\newline\ignorespaces
+    }{
+        \popQED\endtrivlist\@endpefalse
+    }
+\makeatother
+
+\usepackage{thmtools} % Gestion avancée des théorèmes
+	\renewcommand\listtheoremname{Table des théorèmes} % Traduction
+	% Pour avoir la commande \thbookmark qui ajoute le théorème en pdf bookmark
+	% voir [cette Q&A sur TeX SE](http://tex.stackexchange.com/q/123447/8547)
+	\makeatletter
+		\NewDocumentCommand\thlabel{m}{
+			\thmt@thmname\space\@nameuse{the#1}
+		    \ifx\@currentlabelname\@empty
+		    \else
+		        \space(\@currentlabelname)%
+		    \fi
+		}
+		\NewDocumentCommand\thbookmark{}{\bookmark[dest=\@currentHref,rellevel=1,keeplevel,]{\thlabel{\thmt@envname}}}
+	\makeatother
+
+\declaretheoremstyle[postheadspace=\newline,headpunct={},spaceabove=1em,spacebelow=1em]{thstyle}
+\declaretheoremstyle[postheadspace=\newline,headpunct={},spaceabove=1em,spacebelow=1em,shaded={rulecolor=black, rulewidth=.2pt, bgcolor=white}]{mainth}
+
+	\declaretheorem[numberwithin=section,style=mainth,
+	name=Proposition,refname={proposition,propositions},Refname={Proposition,Propositions}]{prop}
+	\declaretheorem[sibling=prop,style=mainth,name=Theorem,refname={Theorem,Theorems},Refname={Theorem,Theorems},postheadhook={\thbookmark}]{theo}
+	\declaretheorem[sibling=prop,style=thstyle,name=Lemme,refname={le lemme,les lemmes},
+	Refname={Le lemme,Les lemmes}]{lem}
+	\declaretheorem[sibling=prop,style=thstyle,name=Corollary,refname={corollary,corollaries},Refname={corollary,corollaries}]{cor}
+	\declaretheorem[sibling=prop,style=thstyle,name=Remark,Refname={Remark,Remarks}]{req}
+	\declaretheorem[sibling=prop,style=mainth,name=Définition,refname={la définition,les définitions},Refname={La définition,Les définitions},postheadhook={\thbookmark}]{df}
+	\declaretheorem[sibling=prop,style=thstyle,name=Exemple,refname={l'exemple,les exemples},Refname={L'exemple,Les exemples}]{ex}
+	\declaretheorem[sibling=prop,style=thstyle,name=Convention,refname={la convention,les conventions},
+	Refname={La convention,Les conventions}]{conv}
+	\declaretheorem[sibling=prop,style=thstyle,name=Méthode,refname={la méthode,les méthodes},
+	Refname={La méthode, Les méthodes}]{met}
+	\declaretheorem[sibling=prop,style=thstyle,name=Exercice,refname={l'exercice,les exercices},
+	Refname={L'exercice, Les exercices}]{exo}
+
+	\declaretheorem[numbered=no,style=mainth,name=Théorème,refname={le théorème,les théorèmes},Refname={Le théorème,Les théorèmes},postheadhook={\thbookmark}]{theo*}
+	\declaretheorem[numbered=no,style=mainth,name=Définition,refname={la définition,les définitions},Refname={La définition,Les définitions},postheadhook={\thbookmark}]{df*}
+	\declaretheorem[numbered=no,style=mainth,name=Proposition,refname={la proposition,les propositions},Refname={La proposition,Les propositions}]{prop*}
+	\declaretheorem[numbered=no,style=thstyle,name=Lemme,refname={le lemme,les lemmes},
+	Refname={Le lemme,Les lemmes}]{lem*}
+	\declaretheorem[numbered=no,style=thstyle,name=Convention,refname={la convention,les conventions},Refname={La convention,Les conventions}]{conv*}
+	\declaretheorem[numbered=no,style=thstyle,name=Méthode,refname={la méthode,les méthodes},
+	Refname={La méthode, Les méthodes}]{met*}
+
+%%%% Déclaration des macros %%%%
+\NewDocumentCommand\dif{m}{\,\mathrm{d}#1}	% Opérateur différentiel
+
+\DeclareMathOperator{\cotan}{cot} % Cotangente
+\DeclareMathOperator{\arccotan}{arccot} % Arccotangente
+
+\DeclareMathOperator{\sh}{sh} % sinus hyperbolique
+\DeclareMathOperator{\ch}{ch} % cosinus hyperbolique
+
+\DeclareMathOperator{\Var}{Var}	% Variance
+
+% Notations élaborées %
+\DeclareMathOperator*{\smallo}{\omicron}	% Landau notation. With an omicron. Because I like that.
+\newunicodechar{ο}{\smallo} 	% That's an omicron (U+03BF)
+
+\NewDocumentCommand\classC{mm}{\mathcal{C}^{#1}\mleft(#2\mright)}
+
+\DeclareMathOperator{\Expectation}{E}	% Espérance
+\NewDocumentCommand\Ex{m}{\Expectation\mleft(#1\mright)}
+
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}	% Norme
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}	% Valeur absolue
+\DeclarePairedDelimiter\nnorm{⦀}{⦀}	% Norme d'opérateur
+\DeclarePairedDelimiter\discseg{⟦}{⟧}	% Intervalle discret
+
+\DeclarePairedDelimiterX\compset[2]{\lbrace}{\rbrace}{#1\,\delimsize|\,#2}	% Compréhension d'ensemble
+\NewDocumentCommand\comp{m}{\prescript{c}{}{#1}}
+
+% Easy colum vectors \vcord{a,b,c} ou \vcord[;]{a;b;c}
+% Here be black magic
+\ExplSyntaxOn
+	\NewDocumentCommand{\vcord}{O{,}m}{\vector_main:nnnn{p}{\\}{#1}{#2}}
+	\NewDocumentCommand{\tvcord}{O{,}m}{\vector_main:nnnn{psmall}{\\}{#1}{#2}}
+	\seq_new:N\l__vector_arg_seq
+	\cs_new_protected:Npn\vector_main:nnnn #1 #2 #3 #4{
+		\seq_set_split:Nnn\l__vector_arg_seq{#3}{#4}
+		\begin{#1matrix}
+			\seq_use:Nnnn\l__vector_arg_seq{#2}{#2}{#2}
+		\end{#1matrix}
+	}
+\ExplSyntaxOff
+
+% Function restriction
+\NewDocumentCommand\restr{mm}{{#1_{\mkern 1mu \vrule height 1ex\mkern2mu_{#2}}}}
+
+% la famille des #1 indice #2 pour #2 appartenant à #3
+\NewDocumentCommand\fami{mmm}{\left(#1_{#2} \right)_{#2 ∈ #3}}
+% la famille des #1 indice #2 pour #2 allant de #3 à #4
+\NewDocumentCommand\famii{mmmm}{\fami{#1}{#2}{\discseg*{#3,#4}}}
+
+% la fonction #1, de #2 dans #3 qui à #4 associe #5
+\NewDocumentCommand\fonct{mmmmm}{
+	\left|\begin{array}{rrl}
+	    #1 :  & #2 & ⟶ #3 \\
+			  & #4 & ⟼ #1\mleft(#4\mright) = #5
+	\end{array}\right.
+}
+
+%%% Page header and footer style.  %%%%
+\usepackage{titleps}
+	\newpagestyle{main}[\small]{
+		\sethead{}{\ifnum\thepage>1 {\pageheadertitle}\fi}{}
+		\setfoot{}{\ifnum\ztotpages>1 {\thepage\ /\ztotpages}\fi}{}
+	}
+	\pagestyle{main}
+
+
+\title{\titlepagetitle}
+\author{}
+\date{\docdate}
+
+%%%% Commandes spécifiques au document %%%%
+\usepackage{filecontents}
+\begin{filecontents*}{biblio.bib}
+@article{bernstein1913demonstration,
+	author={Сергей Натанович Бернштейн},
+	title={Démonstration du théorème de Weierstrass, fondée sur le calcul des probabilités},
+	volume={13},
+	year={1913},
+	journaltitle={Сообщения Харьковское математическое общество},
+	series={2},
+	language={french},
+	origlanguage={russian},
+	url={http://www.math.technion.ac.il/hat/fpapers/bern1.pdf},
+	urldate={2014-06-21},
+}
+
+@article{weierestrass1885uber,
+	author={Karl Weierstraß},
+	title={Über die analytische Darstellbarkeit sogenannter willkürlicher Functionen einer reellen Veränderlichen},
+	year={1885},
+	journaltitle={Sitzungsberichte der Königlich Preußischen Akademie der Wissenschaften zu Berlin},
+	language={german},
+	url={http://bibliothek.bbaw.de/bibliothek-digital/digitalequellen/schriften/anzeige/index_html?band=10-sitz/1885-2&seite:int=109},
+	urldate={2017-03-18},
+}
+
+@article{pinkus2000weierstrass,
+    title={Weierstrass and Approximation Theory},
+	author={Allan Pinkus},
+    journal={Journal of Approximation Theory},
+    volume={107},
+    number={1},
+    pages={1 - 66},
+    year={2000},
+    issn={0021-9045},
+    doi={http://dx.doi.org/10.1006/jath.2000.3508},
+    url={http://www.math.technion.ac.il/hat/fpapers/wap.pdf},
+	urldate={2017-03-18},
+}
+
+@article{heine1872elemente,
+	author={Eduard Heine},
+	title={Die Elemente der Functionenlehre},
+	year={1872},
+	journaltitle={Journal für die reine und angewandte Mathematik},
+	volume={74},
+	language={german},
+	url={http://www.digizeitschriften.de/dms/img/?PID=GDZPPN002154927},
+	urldate={2017-03-18},
+}
+
+@article{chebyshev1867valeurs,
+	title={Des valeurs moyennes},
+	author={Пафну́тий Льво́вич Чебышёв},
+	year={1867},
+	journal={Journal de mathématiques pures et appliquées},
+	pages={177–184},
+	volume={12},
+	series={2},
+}
+
+@article{korovkin1959linear,
+    author = {Павел Петрович Коровкин},
+    title = {On convergence of linear positive operators in the space of continuous functions},
+    year = {1953},
+    language={english},
+	origlanguage={russian},
+    journal={Доклады Академии Наук},
+    volume={90},
+	pages={961-964},
+}
+\end{filecontents*}
+\addbibresource{biblio.bib}
+
+
+% ██████   ██████   ██████ ██    ██ ███    ███ ███████ ███    ██ ████████
+% ██   ██ ██    ██ ██      ██    ██ ████  ████ ██      ████   ██    ██
+% ██   ██ ██    ██ ██      ██    ██ ██ ████ ██ █████   ██ ██  ██    ██
+% ██   ██ ██    ██ ██      ██    ██ ██  ██  ██ ██      ██  ██ ██    ██
+% ██████   ██████   ██████  ██████  ██      ██ ███████ ██   ████    ██
+
+
+
+\begin{document}
+\pagenumbering{arabic}
+\pdfbookmark[1]{Cover}{cover}
+\maketitle
+\thispagestyle{main}
+
+\section{Weierstraß approximation theorem}
+This section discuss the well-know theorem
+\begin{theo}[Weierstraß]\label{theo|weierstrass}
+	Let $f$ be a continuous function over a finite real interval $[a,b]$. For all $ε>0$, there exists a polynomial function $p$ over $[a, b]$ such that
+	\begin{equation}
+		\norm{f-p}_∞ ⩽ ε
+	\end{equation}
+
+	In symbolic notation :
+	\begin{equation}
+		∀ [a, b]∈𝕻(ℝ), ∀ f∈\classC{0}{[a, b]}, ∃ P∈ℝ[X], ∀ ε>0, \norm*{f-\restr{\tilde{P}}{[a,b]}}_∞ ⩽ ε
+	\end{equation}
+\end{theo}
+This statement is what \cite{pinkus2000weierstrass} calls the \textquote{Fundamental Theorem of Approximation Theory}, slightly adapted to my taste. To my knowledge, it has actually never been stated in that form by Karl Weiertraß himself, who was more concerned by representing functions with power series, but it is an immediate consequence of \cite{weierestrass1885uber}. See \cite{pinkus2000weierstrass} more details of the history of that theorem.
+
+In this section, we will often consider the trivially equivalent statement
+\begin{theo}
+	Let $f$ be a continuous function over a finite real interval $[a,b]$, then, there exists a sequence $\fami{f}{n}{ℕ}$ of polynomial functions that converges uniformly to $f$ over $[a, b]$.
+\end{theo}
+
+\subsection{Preliminaries}\label{sec|weierstrass|prelim}
+Almost none of the classic proofs of \cref{theo|weierstrass} actually proves the full thing, but a special case for some fixed $a₀$ and $b₀$. This is not an obstacle, tough, since the following lemma proves that such a special case actually implies the whole theorem.
+
+\begin{proof}
+	Let
+	\begin{equation}
+		\fonct{h}{[a₀, b₀]}{[a, b]}{x}{\frac{b-a}{b₀-a₀}x+a-\frac{b-a}{b₀-a₀}a₀}
+	\end{equation}
+	then $h$ is an homeomorphism since non-constant and affine.
+
+ 	Let $f∈\classC{0}{[a, b]}$ and $ε>0$, then $f∘h∈\classC{0}{[a₀, b₀]}$ so there exists a polynomial function $p$  over $[a₀, b₀]$ such that for all $x∈[a₀, b₀]$,
+	\begin{equation}
+		\abs{f(h(x))-p(x)} ⩽ ε
+	\end{equation}
+	thus, for all $x∈[a, b]$,
+	\begin{equation}
+		\abs{f(x)-(p∘h⁻¹)(x)} = \abs*{f\mleft(h\mleft(h⁻¹(x)\mright)\mright)-p\mleft(h⁻¹(x)\mright)} ⩽ ε
+	\end{equation}
+	and therefore
+	\begin{equation}
+		\norm*{p∘h⁻¹}_∞ ⩽ ε
+	\end{equation}
+
+	 To conclude, note that since $h$ is affine, $h⁻¹$ is also affine, and thus $p∘h⁻¹$ is polynomial.
+\end{proof}
+
+\subsection{Бернште́йн's probabilistic proof}
+In this section, we state and discuss Серге́й Ната́нович Бернште́йн\footnote{Sergei Natanovich Bernstein}'s proof of the special case for $a=0$ and $b=1$. This proof is of both practical, historical and esthetic interest since
+\begin{itemize}
+	\item It is a constructive proof.
+	\item It introduces the Bernstein polynomial basis, which alo appears in other contexts e.g. in the construction of Bézier curves.
+	\item It uses some powerful probability theory results to avoid tedious algebraic manipulations, which makes the proof more concise and easily readable than most.
+\end{itemize}
+
+The following is essentially \cite{bernstein1913demonstration}, with more modern notations and less handwaving.
+\begin{theo}[Bernstein Theorem]\label{theo|bernstein}
+	Let $f∈\classC{0}{[0,1]}$ and for all $n∈ℕ^*$,
+	\begin{equation}
+		\fonct{f_n}{[0,1]}{ℝ}{x}{\Ex{f\mleft(\frac{X_{n,x}}{n}\mright)}}
+	\end{equation}
+	where for all $(n,x)∈ℕ×[0,1]$, $X_{n,x}$ is a binomially distributed random variable with parameters $n$ and $x$.
+
+	Then $\fami{f}{n}{ℕ^*}$ uniformly converges to $f$.
+\end{theo}
+
+This is relevant to the issue at hand, since
+\begin{req}
+	For all $x∈[0,1]$ and $n∈ℕ^*$,
+	\begin{equation}
+		f_n(x) = ∑_{k=0}^n\binom{n}{k}x^k(1-x)^{n-k}f\mleft(\frac{k}{n}\mright)
+	\end{equation}
+	Thus, $f_n$ is polynomial, which proves \cref{theo|weierstrass}, according to \cref{sec|weierstrass|prelim}.
+\end{req}
+
+It is also not very surprising, the intuition of why $\fami{f}{n}{ℕ^*}$ should converge to $f$ can come from e.g. the weak law of large numbers :
+\begin{enumerate}
+	\item For all $x$, $\frac{X_{n, x}}{n}$ converges in probability to $x$ when $n$ goes to $+∞$, since it is the empirical mean of $n$ independent Bernoulli random variables of mean $x$.
+	\item Since it converges in probability, it also converges in distribution.
+	\item Since it converges in distribution, and $f$ is a continuous, bounded (because continuous on a compact) function, $\Ex{f\mleft(\frac{X_{n,x}}{n}\mright)}$ converges to $\Ex{f(x)}=f(x)$.
+\end{enumerate}
+This gives us the pointwise convergence. The uniform law of large numbers would also actually give us the whole proof, but it feels too much like cheating.
+
+\subsubsection{The original proof}
+Let us now state the original, probabilistic proof. It follows this outline
+\begin{enumerate}
+	\item Let $x∈[0, 1]$, we want an upper bound of the distance between $f_n(x)$ and $f(x)$ that does not depend on $x$ and will vanish as $n$ goes to $+∞$.
+	\item To get it, since $f$ is uniformly continuous, we only need to control the distance between $\frac{X_{n,x}}{n}$ and its expected value $x$.
+	\item To control that, we will use a classic probability theory technique : we will split the universe between the event where the distance between $\frac{X_{n,x}}{n}$ and $x$ is smaller than some $ε>0$ (call it $A_{n, x}$), and the complentary event.
+	\item Over $A_{n, x}$, we have what we want, and Bienaymé-Chebyshev's inequality gives us an upper bound on $A_{n, x}^c$ that will not depend on $x$. So we have our control everywhere.
+	\item Putting this together yields us what we want.
+\end{enumerate}
+\begin{proof}[Original proof of \nameref{theo|bernstein}]
+	Let $ε>0$ and $x∈[0,1]$, for all $n∈ℕ^*$,
+	\begin{align}
+		\abs*{f_n(x)-f(x)}
+			&= \abs*{\Ex{f\mleft(\frac{X_{n,x}}{n}\mright)} - f(x)}\\
+			&= \abs*{\Ex{f\mleft(\frac{X_{n,x}}{n}\mright)-f(x)}}\\
+			&⩽ \Ex{\abs*{f\mleft(\frac{X_{n,x}}{n}\mright)-f(x)}}	&& \text{Using the triangular inequality for integrals.}
+	\end{align}
+
+	Since $f$ is continuous over $[0,1]$, it follows from Heine-Cantor Theorem, that it is uniformly continuous. Thus, there exists $δ>0$ such that for all $(x,y)∈[0,1]²$, if $\abs{x-y}⩽δ$, then $\abs{f(x)-f(y)}⩽ε$. Let then
+	\begin{equation}
+		A_{n,x}=\left\{\abs*{\frac{X_{n,x}}{n}-x}⩽δ\right\}
+	\end{equation}
+	we have
+	\begin{align}
+		\abs*{f_n(x)-f(x)}
+			&⩽ \Ex{\abs*{f\mleft(\frac{X_{n,x}}{n}\mright)-f(x)}}\\
+			&⩽ \Ex{\abs*{f\mleft(\frac{X_{n,x}}{n}\mright)-f(x)}𝟙_{A_{n,x}}} + \Ex{\abs*{f\mleft(\frac{X_{n,x}}{n}\mright)-f(x)}𝟙_{A_{n,x}^c}}
+	\end{align}
+
+	But over $A_{n,x}$, we have
+	\begin{equation}
+		\abs*{f\mleft(\frac{X_{n,x}}{n}\mright)-f(x)} ⩽ ε
+	\end{equation}
+	And the following inequality holds everywhere, so it is holds on $A_{n,x}^c$
+	\begin{equation}
+		\abs*{f\mleft(\frac{X_{n,x}}{n}\mright)-f(x)} ⩽ 2\norm{f}_∞
+	\end{equation}
+
+	Thus
+	\begin{align}
+		\abs*{f_n(x)-f(x)}
+			&⩽\Ex{\underbrace{\abs*{f\mleft(\frac{X_{n,x}}{n}\mright)-f(x)}}_{⩽ε}𝟙_{A_{n,x}}}
+				+ \Ex{\underbrace{\abs*{f\mleft(\frac{X_{n,x}}{n}\mright)-f(x)}}_{⩽2\norm{f}_∞}𝟙_{A_{n,x}^c}}\\
+			&⩽ ε\Ex{𝟙_{A_{n,x}}} + 2\norm{f}_∞ \Ex{𝟙_{A_{n,x}^c}}\\
+			&⩽ ε\underbrace{P(A_{n,x})}_{⩽1} + 2\norm{f}_∞ P\mleft(A_{n,x}^c\mright)\\
+			&⩽ ε + 2\norm{f}_∞ P\mleft(A_{n,x}^c\mright)\label{eqline|bernstein1}
+	\end{align}
+
+	But, since $\Ex{X}=nx$ et $\Var(X)=nx(1-x)$, it follows from Bienaymé-Chebyshev's inequality \parencite{chebyshev1867valeurs} that
+	\begin{align}
+		P\mleft(A_{n,x}^c\mright)
+			&= P\mleft(\abs*{\frac{X}{n}-x}>δ\mright)\\
+			&⩽ \frac{\Var\mleft(\frac{X}{n}\mright)}{δ²}\\
+			&⩽ \frac{x(1-x)}{nδ²}\\
+			&⩽ \frac{1}{nδ²}\label{eqline|bernstein2}
+	\end{align}
+
+
+	Finally, injecting \refeq{eqline|bernstein2} into \refeq{eqline|bernstein1} get us
+	\begin{align}
+		\abs*{f_n(x)-f(x)}
+			&⩽ ε + 2\norm{f}_∞ P\mleft(A_{n,x}^c\mright)\\
+			&⩽ ε + 2\norm{f}_∞ \frac{1}{nδ²}\\
+	\end{align}
+	for all $x∈[0,1]$, and thus, since $δ$ is independent of $x$,
+	\begin{align}
+		\norm{f_n-f}_∞
+			&⩽ ε + 2\norm{f}_∞ \frac{1}{nδ²}\\
+			&\xrightarrow[n]{} ε\label{eqline|bernstein3}
+	\end{align}
+
+	Therefore, since \refeq{eqline|bernstein3} holds for all $ε>0$,
+	\begin{equation}
+		\norm{f_n-f}_∞ ⟶ 0
+	\end{equation}
+	i.e.
+	\begin{equation}
+		f_n \xrightarrow[\text{unif.}]{} f
+	\end{equation}
+\end{proof}
+
+\subsubsection{Other proofs}
+There is another, in my opinion less elegant, but more pedestrian proof of the same, which works by unrolling all the probabilistic notions in the original proof.
+\begin{proof}[Boring proof of \nameref{theo|bernstein}]
+	Booooooooooooring
+\end{proof}
+
+There is also a magic proof, which consists of applying the Bohman-Korovkin Approximation Theorem (\cite{korovkin1959linear} as cited by \cite{pinkus2000weierstrass}) to the operator family $\fami{P}{n}{ℕ^*}$ where for all $f$ and $n$, $P_n(f) = f_n$ with $f_n$ defined as above.
+But since this theorem was precisely conceived to generalise the original proof, that proof does not really feel fulfilling.
+
+\printbibliography
+\end{document}
