@@ -10,7 +10,7 @@
 % Settings
 \NewDocumentCommand\myname{}{Evpok Padding}
 \NewDocumentCommand\mylab{}{University of Procrastinatown}
-\NewDocumentCommand\pdftitle{}{On Weierstraß Theorem}
+\NewDocumentCommand\pdftitle{}{On Bézier curves}
 \NewDocumentCommand\mymail{}{evpok.padding@gmail.com}
 \NewDocumentCommand\titlepagetitle{}{\pdftitle}
 \NewDocumentCommand\docdate{}{\today}
@@ -90,7 +90,7 @@
 % 	\usepgflibrary{fpu}
 % 	\usetikzlibrary{calc}
 
-% \usepackage{todonotes}
+\usepackage{todonotes}
 
 % Define a TikZ node for math content:
 % \NewDocumentCommand{\mathnode}{O{}mm}{\tikz[remember picture, baseline=(#2.base), inner sep = 0pt]{\node[#1] (#2) {$\displaystyle #3$};}}
@@ -227,7 +227,8 @@
 	Refname={La méthode, Les méthodes}]{met*}
 
 %%%% Déclaration des macros %%%%
-\NewDocumentCommand\dif{m}{\,\mathrm{d}#1}	% Opérateur différentiel
+\DeclareMathOperator\dif{\mathrm{d}}	% Opérateur différentiel
+\NewDocumentCommand\newtderiv{m}{\frac{\dif}{\dif #1}}
 
 \DeclareMathOperator{\cotan}{cot} % Cotangente
 \DeclareMathOperator{\arccotan}{arccot} % Arccotangente
@@ -253,6 +254,27 @@
 
 \DeclarePairedDelimiterX\compset[2]{\lbrace}{\rbrace}{#1\,\delimsize|\,#2}	% Compréhension d'ensemble
 \NewDocumentCommand\comp{m}{\prescript{c}{}{#1}}
+
+% Projectors
+\DeclareMathOperator\projector{π}
+\NewDocumentCommand\parproj{oo}{
+	\IfNoValueTF{#1}{
+		\projector
+	}{
+		\IfNoValueTF{#2}{
+			\projector_{#1}
+		}{
+			\projector_{#1, ∥#2}
+		}
+	}
+}
+\NewDocumentCommand\orthproj{o}{
+	\IfNoValueTF{#1}{
+		\projector^{⊥}
+	}{
+		\projector_{#1}^{⊥}
+	}
+}
 
 % Easy colum vectors \vcord{a,b,c} ou \vcord[;]{a;b;c}
 % Here be black magic
@@ -298,78 +320,7 @@
 \date{\docdate}
 
 %%%% Commandes spécifiques au document %%%%
-\usepackage{filecontents}
-\begin{filecontents*}{biblio.bib}
-@article{bernstein1913demonstration,
-	author={Сергей Натанович Бернштейн},
-	title={Démonstration du théorème de Weierstrass, fondée sur le calcul des probabilités},
-	volume={13},
-	year={1913},
-	journaltitle={Сообщения Харьковское математическое общество},
-	series={2},
-	language={french},
-	origlanguage={russian},
-	url={http://www.math.technion.ac.il/hat/fpapers/bern1.pdf},
-	urldate={2014-06-21},
-}
 
-@article{weierestrass1885uber,
-	author={Karl Weierstraß},
-	title={Über die analytische Darstellbarkeit sogenannter willkürlicher Functionen einer reellen Veränderlichen},
-	year={1885},
-	journaltitle={Sitzungsberichte der Königlich Preußischen Akademie der Wissenschaften zu Berlin},
-	language={german},
-	url={http://bibliothek.bbaw.de/bibliothek-digital/digitalequellen/schriften/anzeige/index_html?band=10-sitz/1885-2&seite:int=109},
-	urldate={2017-03-18},
-}
-
-@article{pinkus2000weierstrass,
-    title={Weierstrass and Approximation Theory},
-	author={Allan Pinkus},
-    journal={Journal of Approximation Theory},
-    volume={107},
-    number={1},
-    pages={1 - 66},
-    year={2000},
-    issn={0021-9045},
-    doi={http://dx.doi.org/10.1006/jath.2000.3508},
-    url={http://www.math.technion.ac.il/hat/fpapers/wap.pdf},
-	urldate={2017-03-18},
-}
-
-@article{heine1872elemente,
-	author={Eduard Heine},
-	title={Die Elemente der Functionenlehre},
-	year={1872},
-	journaltitle={Journal für die reine und angewandte Mathematik},
-	volume={74},
-	language={german},
-	url={http://www.digizeitschriften.de/dms/img/?PID=GDZPPN002154927},
-	urldate={2017-03-18},
-}
-
-@article{chebyshev1867valeurs,
-	title={Des valeurs moyennes},
-	author={Пафну́тий Льво́вич Чебышёв},
-	year={1867},
-	journal={Journal de mathématiques pures et appliquées},
-	pages={177–184},
-	volume={12},
-	series={2},
-}
-
-@article{korovkin1959linear,
-    author = {Павел Петрович Коровкин},
-    title = {On convergence of linear positive operators in the space of continuous functions},
-    year = {1953},
-    language={english},
-	origlanguage={russian},
-    journal={Доклады Академии Наук},
-    volume={90},
-	pages={961-964},
-}
-\end{filecontents*}
-\addbibresource{biblio.bib}
 
 
 % ██████   ██████   ██████ ██    ██ ███    ███ ███████ ███    ██ ████████
@@ -386,177 +337,79 @@
 \maketitle
 \thispagestyle{main}
 
-\section{Weierstraß approximation theorem}
-This section discuss the well-know theorem
-\begin{theo}[Weierstraß]\label{theo|weierstrass}
-	Let $f$ be a continuous function over a finite real interval $[a,b]$. For all $ε>0$, there exists a polynomial function $p$ over $[a, b]$ such that
-	\begin{equation}
-		\norm{f-p}_∞ ⩽ ε
-	\end{equation}
+\section{Formal definition}
 
-	In symbolic notation :
-	\begin{equation}
-		∀ [a, b]∈𝕻(ℝ), ∀ f∈\classC{0}{[a, b]}, ∃ P∈ℝ[X], ∀ ε>0, \norm*{f-\restr{\tilde{P}}{[a,b]}}_∞ ⩽ ε
-	\end{equation}
-\end{theo}
-This statement is what \cite{pinkus2000weierstrass} calls the \textquote{Fundamental Theorem of Approximation Theory}, slightly adapted to my taste. To my knowledge, it has actually never been stated in that form by Karl Weiertraß himself, who was more concerned by representing functions with power series, but it is an immediate consequence of \cite{weierestrass1885uber}. See \cite{pinkus2000weierstrass} more details of the history of that theorem.
+\section{Tightest bounding box}
+A natural question when drawing Bézier curves is “Howmuch space will it take ?”.
+Of course, we know from \todo{above} that it is contained in the convex hull of its control points, but that is not necessarily the tightest bounding box there is — see for instance \cref{fig|tightcurve}
 
-In this section, we will often consider the trivially equivalent statement
-\begin{theo}
-	Let $f$ be a continuous function over a finite real interval $[a,b]$, then, there exists a sequence $\fami{f}{n}{ℕ}$ of polynomial functions that converges uniformly to $f$ over $[a, b]$.
-\end{theo}
+\begin{figure}
+\centering
+\missingfigure[figwidth=6cm]{Testing a long text string}
+\caption{A Bézier curve that does not take all of its control polygonal}
+\label{fig|tightcurve}
+\end{figure}
 
-\subsection{Preliminaries}\label{sec|weierstrass|prelim}
-Almost none of the classic proofs of \cref{theo|weierstrass} actually proves the full thing, but a special case for some fixed $a₀$ and $b₀$. This is not an obstacle, tough, since the following lemma proves that such a special case actually implies the whole theorem.
+First, let us find out how far from the line $(P₀P₃)$ the curve extends.
+What we want, then is the maximum distance $d_{max}=d(B, (P₀P₃))$ between a $B$, a point of the curve and $(P₀P₃)$.
+Let then $M$ be the midpoint of $[P₀P₁]$\footnote{We could chose any other point, but it gives a nicer symmetry this way.}
+We have
+\begin{align}
+	d\mleft(B, (P₀P₃)\mright)
+		&= d\mleft(\vv{MB}, ℝ\vv{P₀P₁}\mright)\\
+		&= \norm*{\vv{MB} - π\mleft(\vv{MB}\mright)}	&& \text{Where $π$ is the orthogonal projector on $ℝ\vv{P₀P₁}$}\\
+\end{align}
+Now, using the parametrisation\todo{Parametrisation for $t∈[-1,1]$}\footnote{Again, its symmetry will give us a nicer final expression.}, we have for all $t∈[-1, 1]$
+\begin{align}
+	\vv{MB(t)} - π\mleft(\vv{MB(t)}\mright)
+		&=\left[β_{0,3}(t)\vv{MP₀} +β_{1,3}(t)\vv{MP₁} + β_{2,3}(t)\vv{MP₂} + β_{3,3}(t)\vv{MP₃}\right]\\
+		&\phantom{=}-\left[β_{0,3}(t)\vv{MP₀} + β_{1,3}(t)π\mleft(\vv{MP₁}\mright) + β_{2,3}(t)π\mleft(\vv{MP₂}\mright) + β_{3,3}(t)\vv{MP₃}\right]\\
+		&= \frac{3}{8}(1-t)²(1+t)\underbrace{\left[\vv{MP₁} - π\mleft(\vv{MP₁}\mright)\right]}_{p₁} + \frac{3}{8}(1-t)(1+t)²\underbrace{\left[\vv{MP₂} - π\mleft(\vv{MP₂}\mright)\right]}_{p₂}\\
+		&= \frac{3}{8}(1-t)(1+t)\left[(1-t)p₁ + (1+t)p₂\right]\\
+		&= \frac{3}{8}(1-t²)\left[(1-t)p₁ + (1+t)p₂\right]\\
+\end{align}
 
-\begin{proof}
-	Let
-	\begin{equation}
-		\fonct{h}{[a₀, b₀]}{[a, b]}{x}{\frac{b-a}{b₀-a₀}x+a-\frac{b-a}{b₀-a₀}a₀}
-	\end{equation}
-	then $h$ is an homeomorphism since non-constant and affine.
+Now $p₁$ and $p₂$ are both orthogonal to $\vv{P₀P₁}$, so, since we work in a plane, they are colinear, and thus, there exists $λ∈ℝ$ such that $p₂=λp₁$, we have
 
- 	Let $f∈\classC{0}{[a, b]}$ and $ε>0$, then $f∘h∈\classC{0}{[a₀, b₀]}$ so there exists a polynomial function $p$  over $[a₀, b₀]$ such that for all $x∈[a₀, b₀]$,
-	\begin{equation}
-		\abs{f(h(x))-p(x)} ⩽ ε
-	\end{equation}
-	thus, for all $x∈[a, b]$,
-	\begin{equation}
-		\abs{f(x)-(p∘h⁻¹)(x)} = \abs*{f\mleft(h\mleft(h⁻¹(x)\mright)\mright)-p\mleft(h⁻¹(x)\mright)} ⩽ ε
-	\end{equation}
-	and therefore
-	\begin{equation}
-		\norm*{p∘h⁻¹}_∞ ⩽ ε
-	\end{equation}
+\begin{align}
+		\vv{MB(t)} - π\mleft(\vv{MB(t)}\mright)
+			&= \frac{3}{8}(1-t²)\left[(1-t)p₁ + (1+t)λp₁\right]\\
+			&= \frac{3}{8}(1-t²)\left[(1-t) + λ(1+t)\right]p₁\\
+			&= \frac{3}{8}(1-t²)\left[(λ-1)t + (λ+1)\right]p₁
+\end{align}
 
-	 To conclude, note that since $h$ is affine, $h⁻¹$ is also affine, and thus $p∘h⁻¹$ is polynomial.
-\end{proof}
+and thus
 
-\subsection{Бернште́йн's probabilistic proof}
-In this section, we state and discuss Серге́й Ната́нович Бернште́йн\footnote{Sergei Natanovich Bernstein}'s proof of the special case for $a=0$ and $b=1$. This proof is of both practical, historical and esthetic interest since
-\begin{itemize}
-	\item It is a constructive proof.
-	\item It introduces the Bernstein polynomial basis, which alo appears in other contexts e.g. in the construction of Bézier curves.
-	\item It uses some powerful probability theory results to avoid tedious algebraic manipulations, which makes the proof more concise and easily readable than most.
-\end{itemize}
+\begin{equation}
+	\norm*{\vv{MB(t)} - π\mleft(\vv{MB(t)}\mright)}
+		= \frac{3}{8}(1-t²)\abs*{(λ-1)t + (λ+1)}\norm{p₁}
+\end{equation}
 
-The following is essentially \cite{bernstein1913demonstration}, with more modern notations and less handwaving.
-\begin{theo}[Bernstein Theorem]\label{theo|bernstein}
-	Let $f∈\classC{0}{[0,1]}$ and for all $n∈ℕ^*$,
-	\begin{equation}
-		\fonct{f_n}{[0,1]}{ℝ}{x}{\Ex{f\mleft(\frac{X_{n,x}}{n}\mright)}}
-	\end{equation}
-	where for all $(n,x)∈ℕ×[0,1]$, $X_{n,x}$ is a binomially distributed random variable with parameters $n$ and $x$.
+We will now have to study several cases depending on $λ$.
 
-	Then $\fami{f}{n}{ℕ^*}$ uniformly converges to $f$.
-\end{theo}
+\subsection{Case 1: $λ=1$}
+This is the easiest case.
+It occurs whenever $p₁=p₂$, i.e., when $P₁$ and $P₂$ are on the same side and at the same distance of $(P₀P₃)$. In that case,
 
-This is relevant to the issue at hand, since
-\begin{req}
-	For all $x∈[0,1]$ and $n∈ℕ^*$,
-	\begin{equation}
-		f_n(x) = ∑_{k=0}^n\binom{n}{k}x^k(1-x)^{n-k}f\mleft(\frac{k}{n}\mright)
-	\end{equation}
-	Thus, $f_n$ is polynomial, which proves \cref{theo|weierstrass}, according to \cref{sec|weierstrass|prelim}.
-\end{req}
+\begin{equation}
+	\norm*{\vv{MB(t)} - π\mleft(\vv{MB(t)}\mright)}
+		= \frac{3}{4}(1-t²)\norm{p₁}
+\end{equation}
+which is obviously maximal for $t=0$, and thus,
+\begin{equation}
+	\boxed{d_{max} = \frac{3}{4}\norm{p₁}}
+\end{equation}
 
-It is also not very surprising, the intuition of why $\fami{f}{n}{ℕ^*}$ should converge to $f$ can come from e.g. the weak law of large numbers :
-\begin{enumerate}
-	\item For all $x$, $\frac{X_{n, x}}{n}$ converges in probability to $x$ when $n$ goes to $+∞$, since it is the empirical mean of $n$ independent Bernoulli random variables of mean $x$.
-	\item Since it converges in probability, it also converges in distribution.
-	\item Since it converges in distribution, and $f$ is a continuous, bounded (because continuous on a compact) function, $\Ex{f\mleft(\frac{X_{n,x}}{n}\mright)}$ converges to $\Ex{f(x)}=f(x)$.
-\end{enumerate}
-This gives us the pointwise convergence. The uniform law of large numbers would also actually give us the whole proof, but it feels too much like cheating.
-
-\subsubsection{The original proof}
-Let us now state the original, probabilistic proof. It follows this outline
-\begin{enumerate}
-	\item Let $x∈[0, 1]$, we want an upper bound of the distance between $f_n(x)$ and $f(x)$ that does not depend on $x$ and will vanish as $n$ goes to $+∞$.
-	\item To get it, since $f$ is uniformly continuous, we only need to control the distance between $\frac{X_{n,x}}{n}$ and its expected value $x$.
-	\item To control that, we will use a classic probability theory technique : we will split the universe between the event where the distance between $\frac{X_{n,x}}{n}$ and $x$ is smaller than some $ε>0$ (call it $A_{n, x}$), and the complentary event.
-	\item Over $A_{n, x}$, we have what we want, and Bienaymé-Chebyshev's inequality gives us an upper bound on $P(A_{n, x}^c)$ that will not depend on $x$. So we have our control everywhere.
-	\item Putting this together yields us what we want.
-\end{enumerate}
-\begin{proof}[Original proof of \nameref{theo|bernstein}]
-	Let $ε>0$ and $x∈[0,1]$, for all $n∈ℕ^*$,
-	\begin{align}
-		\abs*{f_n(x)-f(x)}
-			&= \abs*{\Ex{f\mleft(\frac{X_{n,x}}{n}\mright)} - f(x)}\\
-			&= \abs*{\Ex{f\mleft(\frac{X_{n,x}}{n}\mright)-f(x)}}\\
-			&⩽ \Ex{\abs*{f\mleft(\frac{X_{n,x}}{n}\mright)-f(x)}}	&& \text{Using the triangular inequality for integrals.}
-	\end{align}
-
-	Since $f$ is continuous over $[0,1]$, it follows from Heine-Cantor Theorem, that it is uniformly continuous. Thus, there exists $δ>0$ such that for all $(x,y)∈[0,1]²$, if $\abs{x-y}⩽δ$, then $\abs{f(x)-f(y)}⩽ε$. Let then
-	\begin{equation}
-		A_{n,x}=\left\{\abs*{\frac{X_{n,x}}{n}-x}⩽δ\right\}
-	\end{equation}
-	we have
-	\begin{align}
-		\abs*{f_n(x)-f(x)}
-			&⩽ \Ex{\abs*{f\mleft(\frac{X_{n,x}}{n}\mright)-f(x)}}\\
-			&⩽ \Ex{\abs*{f\mleft(\frac{X_{n,x}}{n}\mright)-f(x)}𝟙_{A_{n,x}}} + \Ex{\abs*{f\mleft(\frac{X_{n,x}}{n}\mright)-f(x)}𝟙_{A_{n,x}^c}}
-	\end{align}
-
-	But over $A_{n,x}$, we have
-	\begin{equation}
-		\abs*{f\mleft(\frac{X_{n,x}}{n}\mright)-f(x)} ⩽ ε
-	\end{equation}
-	And the following inequality holds everywhere, so it is holds on $A_{n,x}^c$
-	\begin{equation}
-		\abs*{f\mleft(\frac{X_{n,x}}{n}\mright)-f(x)} ⩽ 2\norm{f}_∞
-	\end{equation}
-
-	Thus
-	\begin{align}
-		\abs*{f_n(x)-f(x)}
-			&⩽\Ex{\underbrace{\abs*{f\mleft(\frac{X_{n,x}}{n}\mright)-f(x)}}_{⩽ε}𝟙_{A_{n,x}}}
-				+ \Ex{\underbrace{\abs*{f\mleft(\frac{X_{n,x}}{n}\mright)-f(x)}}_{⩽2\norm{f}_∞}𝟙_{A_{n,x}^c}}\\
-			&⩽ ε\Ex{𝟙_{A_{n,x}}} + 2\norm{f}_∞ \Ex{𝟙_{A_{n,x}^c}}\\
-			&⩽ ε\underbrace{P(A_{n,x})}_{⩽1} + 2\norm{f}_∞ P\mleft(A_{n,x}^c\mright)\\
-			&⩽ ε + 2\norm{f}_∞ P\mleft(A_{n,x}^c\mright)\label{eqline|bernstein1}
-	\end{align}
-
-	But, since $\Ex{X}=nx$ et $\Var(X)=nx(1-x)$, it follows from Bienaymé-Chebyshev's inequality \parencite{chebyshev1867valeurs} that
-	\begin{align}
-		P\mleft(A_{n,x}^c\mright)
-			&= P\mleft(\abs*{\frac{X}{n}-x}>δ\mright)\\
-			&⩽ \frac{\Var\mleft(\frac{X}{n}\mright)}{δ²}\\
-			&⩽ \frac{x(1-x)}{nδ²}\\
-			&⩽ \frac{1}{nδ²}\label{eqline|bernstein2}
-	\end{align}
-
-
-	Finally, injecting \refeq{eqline|bernstein2} into \refeq{eqline|bernstein1} get us
-	\begin{align}
-		\abs*{f_n(x)-f(x)}
-			&⩽ ε + 2\norm{f}_∞ P\mleft(A_{n,x}^c\mright)\\
-			&⩽ ε + 2\norm{f}_∞ \frac{1}{nδ²}\\
-	\end{align}
-	for all $x∈[0,1]$, and thus, since $δ$ is independent of $x$,
-	\begin{align}
-		\norm{f_n-f}_∞
-			&⩽ ε + 2\norm{f}_∞ \frac{1}{nδ²}\\
-			&\xrightarrow[n]{} ε\label{eqline|bernstein3}
-	\end{align}
-
-	Therefore, since \refeq{eqline|bernstein3} holds for all $ε>0$,
-	\begin{equation}
-		\norm{f_n-f}_∞ ⟶ 0
-	\end{equation}
-	i.e.
-	\begin{equation}
-		f_n \xrightarrow[\text{unif.}]{} f
-	\end{equation}
-\end{proof}
-
-\subsubsection{Other proofs}
-There is another, in my opinion less elegant, but more pedestrian proof of the same, which works by unrolling all the probabilistic notions in the original proof.
-\begin{proof}[Boring proof of \nameref{theo|bernstein}]
-	Booooooooooooring
-\end{proof}
-
-There is also a magic proof, which consists of applying the Bohman-Korovkin Approximation Theorem (\cite{korovkin1959linear} as cited by \cite{pinkus2000weierstrass}) to the operator family $\fami{P}{n}{ℕ^*}$ where for all $f$ and $n$, $P_n(f) = f_n$ with $f_n$ defined as above.
-But since this theorem was precisely conceived to generalise the original proof, that proof does not really feel fulfilling.
-
-\printbibliography
+\subsection{Case 2: $λ=-1$}
+This occurs if $p₁=-p₂$, i.e., when $P₁$ and $P₂$ are at the same distance but on opposite sides of $(P₀P₃)$. In that case
+\begin{equation}
+	\norm*{\vv{MB(t)} - π\mleft(\vv{MB(t)}\mright)}
+		= \frac{3}{4}(1-t²)\abs{t}\norm{p₁}
+\end{equation}
+which is maximal for $t=±\frac{√{3}}{2}$ and thus
+\begin{equation}
+	\boxed{d_{max} = \frac{√{3}}{2}\norm{p₁}}
+\end{equation}
+which is incidentally the square root of $d_max$ if $λ=1$.
+This is probably no happenstance, but I couldn't find a satisfying justification.
 \end{document}

@@ -17,4 +17,4 @@ as I get to step 2. above. Feel free to request others or — if *par extraord
 This repository has the usual failing of git-versioned LaTeX document archived, that is, the source
 (.tex) files are versioned easily enough — being plain text —, but the output (.pdf) files are not
 — being binaries. To avoid clogging the repository with the useless history of those files, they are
-not included here, but are available in [GitHub releases](https://github.com/Evpok/trivialities/releases).
+not included here, but are available in [GitHub releases](https://github.com/Evpok/trivialities/releases/tag/latest).

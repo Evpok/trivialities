@@ -10,7 +10,7 @@
 % Settings
 \NewDocumentCommand\myname{}{Evpok Padding}
 \NewDocumentCommand\mylab{}{University of Twitterisation}
-\NewDocumentCommand\pdftitle{}{On integration and asymptotic domination}
+\NewDocumentCommand\pdftitle{}{On asymptotic comparisons}
 \NewDocumentCommand\mymail{}{evpok.padding@gmail.com}
 \NewDocumentCommand\titlepagetitle{}{\pdftitle}
 \NewDocumentCommand\docdate{}{\today}
@@ -202,7 +202,8 @@
 	\declaretheorem[sibling=prop,style=thstyle,name=Corollary,refname={corollary,corollaries},Refname={corollary,corollaries}]{cor}
 	\declaretheorem[sibling=prop,style=thstyle,name=Remarque,refname={la remarque,les remarques},Refname={La remarque,Les remarques}]{req}
 	\declaretheorem[sibling=prop,style=mainth,name=Définition,refname={la définition,les définitions},Refname={La définition,Les définitions},postheadhook={\thbookmark}]{df}
-	\declaretheorem[sibling=prop,style=thstyle,name=Exemple,refname={l'exemple,les exemples},Refname={L'exemple,Les exemples}]{ex}
+	\declaretheorem[sibling=prop,style=thstyle,name=Example]{ex}
+    \declaretheorem[sibling=prop,style=thstyle,name=Counterexample]{cex}
 	\declaretheorem[sibling=prop,style=thstyle,name=Convention,refname={la convention,les conventions},
 	Refname={La convention,Les conventions}]{conv}
 	\declaretheorem[sibling=prop,style=thstyle,name=Méthode,refname={la méthode,les méthodes},
@@ -241,6 +242,8 @@
 \DeclarePairedDelimiter\abs{\lvert}{\rvert}	% Valeur absolue
 \DeclarePairedDelimiter\nnorm{⦀}{⦀}	% Norme d'opérateur
 \DeclarePairedDelimiter\discseg{⟦}{⟧}	% Intervalle discret
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
 
 \DeclarePairedDelimiterX\compset[2]{\lbrace}{\rbrace}{#1\,\delimsize|\,#2}	% Compréhension d'ensemble
 \NewDocumentCommand\comp{m}{\prescript{c}{}{#1}}
@@ -302,87 +305,19 @@
 \maketitle
 \thispagestyle{main}
 
-\section{Original problem statement}
-\foreignblockquote{french}[@LHomme\_Qui\_Rit]{
-    Supposons une fonction f:R⁺->R continue telle que f(x)=a+o(1) avec a réel.
+\section{Fallacies}
 
-    Peut-on affirmer que F(x)/x, avec F primitive de f, tend vers a quand x tend vers +inf ?
-
-    (je n'ai pas la réponse, mais mon intuition est que oui)
-}
-
-In other words
-\begin{prop}\label{prop|original}
-    Let $f:ℝ⁺⟶ℝ$ be a continuous function such that $f \xrightarrow[+∞]{} a ∈ ℝ$ and $F$ a primitive of $f$.
-
-    Then
+\begin{cex}[Equivalence to supremum]
+    $g\xrightarrow[+∞]{} +∞$ does not imply $g(x)∼\sup_{[a,x]} g$.
+\end{cex}
+\begin{proof}
+    Consider
     \begin{equation}
-        \frac{F(x)}{x} \xrightarrow[x→+∞]{} a
+        g: t ⟼ (\ceil{t}-t)(\floor{t}(\floor{t}\bmod2)+\floor{t}²(\ceil{t}\bmod2)) + (t-\floor{t})(\ceil{t}²(\floor{t}\bmod2)+\ceil{t}(\ceil{t}\bmod2))
     \end{equation}
-\end{prop}
+    it is the piecewise linear interpolation of $\compset{(2n, (2n)²)}{n∈ℕ}∪\compset{(2n+1, 2n+1)}{n∈ℕ}$ (in other words, $n²$ on even $n$s and $n$ on odd $n$s).
 
-\section{Proof of the original conjecture}
-Let us begin by proving the following corollary, which is the particular case for $a=0$.
-\begin{cor}\label{cor|particular}
-    Let $f:ℝ⁺⟶ℝ$ be a continuous function, such that $f \xrightarrow[+∞]{} 0$ and $F$ a primitive of $f$.
-
-    Then
-    \begin{equation}
-        \frac{F(x)}{x} \xrightarrow[x→+∞]{} 0
-    \end{equation}
-\end{cor}
-\begin{proof}[Proof of \cref{cor|particular}]
-    Let $x∈ℝ⁺_*$ (since we only care about the limit in $+∞$ anyway), then
-
-    \begin{equation}
-        \frac{F(x)}{x} = \frac{1}{x}∫_α^xf(t)\dif{t}
-    \end{equation}
-    for some $α∈ℝ$.
-
-    Let $ε>0$, since $f \xrightarrow[+∞]{} 0$ there exists $A∈ℝ$ (for convenience, let us take it positive, too) such that for all $x⩾A$, $\abs{f(x)}⩽ε$. Thus
-    \begin{align}
-        \abs*{\frac{F(x)}{x}}
-            &⩽ \frac{1}{x}∫_α^x\abs{f(t)}\dif{t}\\
-            &⩽ \frac{1}{x}\underbrace{∫_α^A \abs{f(t)}\dif{t}}_{⩽\abs{A-α}\sup_{[α, A]}\abs{f}} + \frac{1}{x}∫_A^x \underbrace{\abs{f(t)}}_{⩽ε}\dif{t}\\
-            &⩽ \underbrace{\frac{\abs{A-α}\sup_{[α, A]}\abs{f}}{x}}_{\xrightarrow[x→+∞]{}0} + \underbrace{\frac{\abs{x-A}}{x}}_{\xrightarrow[x→+∞]{}1}ε \xrightarrow[x→+∞]{} ε
-    \end{align}
-
-    Thus, for all $ε>0$, $\lim_{x→+∞}\abs*{\frac{F(x)}{x}}⩽ε$, and so
-    \begin{equation}
-        \frac{F(x)}{x} \xrightarrow[x→+∞]{} 0
-    \end{equation}
+    Then have $g(x)∼x$ but $\sup_{[a,x]} g∼x²$.
 \end{proof}
 
-We can then easily prove \cref{prop|original}
-\begin{proof}[Proof of \cref{prop|original}]
-    Let $f = a + w$, with $w: ℝ⁺⟶ℝ$ and $\lim_{+∞}w = 0$. If $F$ is a primitive of $f$, we then have for all $x$
-    \begin{equation}
-        F(x) = ax + W(x) + C
-    \end{equation}
-    with $W(x)=∫_0^xw(t)\dif{t}$ and $C∈ℝ$.
-
-    So, by \cref{cor|particular}
-    \begin{align}
-        \frac{F(x)}{x}
-            &= a + \underbrace{\frac{W(x)}{x}}_{\xrightarrow[x→∞]{} 0} + \frac{C}{x}\\
-            &\xrightarrow[x→+∞]{} a
-    \end{align}
-\end{proof}
-
-\section{Further results}
-The previous section proved the original conjecture in its restated form. But let us recall the original statement (emphasis mine) \foreigntextquote{french}{Supposons une fonction f:R⁺->R continue telle que \textbf{f(x)=a+o(1)} avec a réel}. Indeed, if we keep this formulation, \cref{cor|particular} becomes
-
-\begin{prop}
-    Let $f=\displaystyleο_{+∞}(1)$ and $F$ a primitive of $f$. Then $F=\displaystyleο_{+∞}(x)$.
-\end{prop}
-
-Which begs the question: “What of $f=ο(x)$?”. Well, it turns out that in that case, we indeed have $F=ο(x²)$. In fact,
-the more general \cref{prop|general} holds
-
-\begin{prop}\label{prop|general}
-	Let $g:ℝ⟶ℝ$ be a continuous function.
-
-	If there exists a primitive $G$ of $g$ such that $G\xrightarrow[+∞]{}+∞$, then
-	if $f=ο_{+∞}(g)$ is a continuous function, for all primitives $F$ of $f$, $F=ο_{+∞}(G)$.
-\end{prop}
 \end{document}
