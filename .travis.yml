@@ -13,6 +13,7 @@ cache:
   directories:
     - "/tmp/texlive"
     - "$HOME/.texlive"
+    - "$HOME/texmf"
 
 install:
   - source ./install_texlive.sh
