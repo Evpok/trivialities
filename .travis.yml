@@ -3,10 +3,11 @@ dist: trusty
 addons:
   apt:
     packages:
-    - curl
-    - tar
-    - fonts-linuxlibertine
-    - texlive-fonts-recommended
+      - xzdec
+      - curl
+      - tar
+      - fonts-linuxlibertine
+      - texlive-fonts-recommended
 
 cache:
   directories:
