@@ -6,6 +6,8 @@
 # required
 
 # See if there is a cached version of TL available
+set -x
+
 export PATH=/tmp/texlive/bin/x86_64-linux:$PATH
 if ! command -v texlua > /dev/null; then
   # Obtain TeX Live
