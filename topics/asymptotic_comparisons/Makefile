@@ -1,4 +1,4 @@
-NAME = weierstrass
+NAME = asymptoticcomparisons
 LATEX = latexmk -lualatex -halt-on-error -file-line-error -interaction=nonstopmode
 CLEAN = latexmk -C
 
