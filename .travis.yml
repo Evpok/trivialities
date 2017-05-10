@@ -1,15 +1,18 @@
+dist: trusty
+
 addons:
   apt:
     packages:
-    - curl
-    - tar
-    - fonts-linuxlibertine
-    - texlive-fonts-recommended
+      - xzdec
+      - curl
+      - tar
+      - fonts-linuxlibertine
 
 cache:
   directories:
     - "/tmp/texlive"
     - "$HOME/.texlive"
+    - "$HOME/texmf"
 
 install:
   - source ./install_texlive.sh
